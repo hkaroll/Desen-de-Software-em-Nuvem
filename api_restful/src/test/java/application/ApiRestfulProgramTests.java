@@ -1,10 +1,10 @@
-package com.example.api_restful;
+package application;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ApiRestfulApplicationTests {
+class ApiRestfulProgramTests {
 
 	@Test
 	void contextLoads() {
