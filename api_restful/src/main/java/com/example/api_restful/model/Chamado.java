@@ -41,12 +41,10 @@ public class Chamado {
     @Column(nullable = false, length = 2000)
     private String descricao;
 
-    // Relacionamento Muitos-para-Um: Muitos chamados pertencem a um solicitante (usuário)
     @ManyToOne
     @JoinColumn(name = "solicitante_id", nullable = false)
     private Usuario solicitante;
 
-    // Relacionamento Muitos-para-Um: Muitos chamados podem ser atribuídos a um técnico (usuário)
     @ManyToOne
     @JoinColumn(name = "tecnico_id")
     private Usuario tecnico;

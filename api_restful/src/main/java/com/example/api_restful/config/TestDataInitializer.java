@@ -18,7 +18,6 @@ public class TestDataInitializer {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // Injeção de dependência via construtor (boa prática)
     public TestDataInitializer(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
@@ -32,8 +31,8 @@ public class TestDataInitializer {
             Usuario admin = new Usuario();
             admin.setNome("Admin Teste");
             admin.setEmail("admin@email.com");
-            admin.setSenha(passwordEncoder.encode("12345")); // Senha criptografada
-            admin.setPerfis(Set.of(Perfil.ADMIN, Perfil.USUARIO)); // Adiciona perfis
+            admin.setSenha(passwordEncoder.encode("12345"));
+            admin.setPerfis(Set.of(Perfil.ADMIN, Perfil.USUARIO));
 
             usuarioRepository.save(admin);
 

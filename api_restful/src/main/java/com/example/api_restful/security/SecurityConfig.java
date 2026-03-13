@@ -21,7 +21,6 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    // URLs públicas que não exigem autenticação
     private static final String[] PUBLIC_MATCHERS = {
             "/swagger-ui/**",
             "/v3/api-docs/**",
@@ -40,7 +39,6 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             );
 
-        // Adiciona o nosso filtro JWT antes do filtro padrão do Spring
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

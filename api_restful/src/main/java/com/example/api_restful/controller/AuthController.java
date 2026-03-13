@@ -24,7 +24,6 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
 
-    // Injeção de dependência via construtor
     public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;

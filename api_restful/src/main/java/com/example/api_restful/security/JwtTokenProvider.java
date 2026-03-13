@@ -23,7 +23,6 @@ public class JwtTokenProvider {
 
     private Key key;
 
-    // Gera a chave de assinatura a partir do segredo
     private Key getKey() {
         if (key == null) {
             key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
@@ -31,7 +30,6 @@ public class JwtTokenProvider {
         return key;
     }
 
-    // Gera um token JWT para um usuário autenticado
     public String generateToken(Authentication authentication) {
         Usuario userPrincipal = (Usuario) authentication.getPrincipal();
         Date now = new Date();
@@ -45,7 +43,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // Obtém o e-mail do usuário a partir do token JWT
     public String getUsernameFromJWT(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getKey())
@@ -55,13 +52,12 @@ public class JwtTokenProvider {
         return claims.getSubject();
     }
 
-    // Valida o token JWT
     public boolean validateToken(String authToken) {
         try {
             Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(authToken);
             return true;
         } catch (Exception ex) {
-            // Logar a exceção seria uma boa prática aqui
+
         }
         return false;
     }
