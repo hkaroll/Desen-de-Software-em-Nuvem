@@ -36,7 +36,7 @@ public class Usuario implements UserDetails {
     private String email;
 
     @NotBlank(message = "A senha não pode estar em branco.")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // A senha só é escrita, nunca lida/retornada
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String senha;
 
@@ -44,8 +44,6 @@ public class Usuario implements UserDetails {
     @CollectionTable(name = "perfis")
     @Enumerated(EnumType.STRING)
     private Set<Perfil> perfis = new HashSet<>();
-
-    // --- Métodos da Interface UserDetails ---
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -66,21 +64,21 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // A conta nunca expira
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // A conta nunca é bloqueada
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // As credenciais nunca expiram
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return true; // A conta está sempre habilitada
+        return true;
     }
 }

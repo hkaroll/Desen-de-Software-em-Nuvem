@@ -2,6 +2,7 @@ package com.example.api_restful.controller;
 
 import com.example.api_restful.exception.ResourceNotFoundException;
 import com.example.api_restful.model.Usuario;
+import com.example.api_restful.model.enums.Perfil;
 import com.example.api_restful.repository.UsuarioRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -28,7 +30,7 @@ public class UsuarioController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Operation(summary = "Cria um novo usuário (Cadastro)", description = "Cria um novo usuário no banco de dados. A senha será criptografada.")
+    @Operation(summary = "Cria um novo usuário (Cadastro)", description = "Cria um novo usuário no banco de dados com o perfil 'USUARIO'. A senha será criptografada.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados de usuário inválidos"),
@@ -37,6 +39,7 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<Usuario> criarUsuario(@Valid @RequestBody Usuario usuario) {
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        usuario.setPerfis(Set.of(Perfil.USUARIO));
         Usuario novoUsuario = usuarioRepository.save(usuario);
         return new ResponseEntity<>(novoUsuario, HttpStatus.CREATED);
     }

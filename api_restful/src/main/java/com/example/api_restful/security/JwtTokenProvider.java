@@ -36,7 +36,7 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getUsername()) // O e-mail do usuário
+                .setSubject(userPrincipal.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(getKey(), SignatureAlgorithm.HS512)
@@ -57,7 +57,6 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(authToken);
             return true;
         } catch (Exception ex) {
-
         }
         return false;
     }

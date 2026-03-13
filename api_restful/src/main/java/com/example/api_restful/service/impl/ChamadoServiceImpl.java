@@ -1,11 +1,14 @@
 package com.example.api_restful.service.impl;
 
 import com.example.api_restful.dto.ChamadoDTO;
+import com.example.api_restful.exception.AccessDeniedException;
 import com.example.api_restful.exception.ResourceNotFoundException;
 import com.example.api_restful.model.Chamado;
 import com.example.api_restful.model.Usuario;
+import com.example.api_restful.model.enums.Perfil;
 import com.example.api_restful.repository.ChamadoRepository;
 import com.example.api_restful.repository.UsuarioRepository;
+import com.example.api_restful.security.SecurityContextUtil;
 import com.example.api_restful.service.ChamadoService;
 import org.springframework.stereotype.Service;
 
@@ -26,23 +29,32 @@ public class ChamadoServiceImpl implements ChamadoService {
 
     @Override
     public ChamadoDTO findById(Long id) {
+        Usuario usuarioLogado = SecurityContextUtil.getAuthenticatedUser();
         Chamado chamado = chamadoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Chamado não encontrado com o ID: " + id));
+
+        if (!usuarioLogado.getPerfis().contains(Perfil.ADMIN) && !chamado.getSolicitante().equals(usuarioLogado)) {
+            throw new AccessDeniedException("Acesso negado: Você não tem permissão para visualizar este chamado.");
+        }
+
         return toDTO(chamado);
     }
 
     @Override
     public List<ChamadoDTO> findAll() {
-        return chamadoRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+        Usuario usuarioLogado = SecurityContextUtil.getAuthenticatedUser();
+
+        if (usuarioLogado.getPerfis().contains(Perfil.ADMIN)) {
+            return chamadoRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+        } else {
+            return chamadoRepository.findBySolicitante(usuarioLogado).stream().map(this::toDTO).collect(Collectors.toList());
+        }
     }
 
     @Override
     public ChamadoDTO create(ChamadoDTO chamadoDTO) {
+        Usuario solicitante = SecurityContextUtil.getAuthenticatedUser();
         Chamado chamado = fromDTO(chamadoDTO);
-        // Aqui, em um cenário real, pegaríamos o usuário logado para ser o solicitante.
-        // Por enquanto, vamos buscar o usuário pelo ID fornecido no DTO.
-        Usuario solicitante = usuarioRepository.findById(chamadoDTO.getSolicitanteId())
-                .orElseThrow(() -> new ResourceNotFoundException("Solicitante não encontrado com o ID: " + chamadoDTO.getSolicitanteId()));
         chamado.setSolicitante(solicitante);
         
         Chamado novoChamado = chamadoRepository.save(chamado);
@@ -51,15 +63,20 @@ public class ChamadoServiceImpl implements ChamadoService {
 
     @Override
     public ChamadoDTO update(Long id, ChamadoDTO chamadoDTO) {
+        Usuario usuarioLogado = SecurityContextUtil.getAuthenticatedUser();
         Chamado chamado = chamadoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Chamado não encontrado com o ID: " + id));
+
+        if (!usuarioLogado.getPerfis().contains(Perfil.ADMIN) && !chamado.getSolicitante().equals(usuarioLogado)) {
+            throw new AccessDeniedException("Acesso negado: Você não tem permissão para atualizar este chamado.");
+        }
 
         chamado.setPrioridade(chamadoDTO.getPrioridade());
         chamado.setStatus(chamadoDTO.getStatus());
         chamado.setTitulo(chamadoDTO.getTitulo());
         chamado.setDescricao(chamadoDTO.getDescricao());
 
-        if (chamadoDTO.getTecnicoId() != null) {
+        if (usuarioLogado.getPerfis().contains(Perfil.ADMIN) && chamadoDTO.getTecnicoId() != null) {
             Usuario tecnico = usuarioRepository.findById(chamadoDTO.getTecnicoId())
                     .orElseThrow(() -> new ResourceNotFoundException("Técnico não encontrado com o ID: " + chamadoDTO.getTecnicoId()));
             chamado.setTecnico(tecnico);
@@ -72,8 +89,6 @@ public class ChamadoServiceImpl implements ChamadoService {
         Chamado chamadoAtualizado = chamadoRepository.save(chamado);
         return toDTO(chamadoAtualizado);
     }
-
-    // --- Métodos de conversão ---
 
     private ChamadoDTO toDTO(Chamado chamado) {
         ChamadoDTO dto = new ChamadoDTO();

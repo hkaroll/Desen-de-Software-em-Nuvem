@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/chamados")
 @Tag(name = "Chamados", description = "API para gerenciamento de chamados de suporte")
-@SecurityRequirement(name = "bearerAuth") // Exige autenticação para todos os endpoints deste controller
+@SecurityRequirement(name = "bearerAuth")
 public class ChamadoController {
 
     private final ChamadoService chamadoService;
