@@ -8,7 +8,7 @@ import com.example.api_restful.model.Usuario;
 import com.example.api_restful.model.enums.Perfil;
 import com.example.api_restful.repository.ChamadoRepositorio;
 import com.example.api_restful.repository.UsuarioRepositorio;
-import com.example.api_restful.security.SecurityContextUtil;
+import com.example.api_restful.security.UtilDoContextoDeSeguranca;
 import com.example.api_restful.service.ChamadoServico;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +37,7 @@ public class ChamadoServicoImpl implements ChamadoServico {
 
     @Override
     public List<ChamadoDTO> findAll() {
-        Usuario usuarioLogado = SecurityContextUtil.getAuthenticatedUser();
+        Usuario usuarioLogado = UtilDoContextoDeSeguranca.getAuthenticatedUser();
         if (usuarioLogado.getPerfis().contains(Perfil.ADMIN)) {
             return chamadoRepositorio.findAll().stream().map(this::toDTO).collect(Collectors.toList());
         } else {
@@ -47,7 +47,7 @@ public class ChamadoServicoImpl implements ChamadoServico {
 
     @Override
     public ChamadoDTO create(ChamadoDTO chamadoDTO) {
-        Usuario solicitante = SecurityContextUtil.getAuthenticatedUser();
+        Usuario solicitante = UtilDoContextoDeSeguranca.getAuthenticatedUser();
         Chamado chamado = fromDTO(chamadoDTO);
         chamado.setSolicitante(solicitante);
         Chamado novoChamado = chamadoRepositorio.save(chamado);
@@ -65,7 +65,7 @@ public class ChamadoServicoImpl implements ChamadoServico {
         chamado.setTitulo(chamadoDTO.getTitulo());
         chamado.setDescricao(chamadoDTO.getDescricao());
 
-        Usuario usuarioLogado = SecurityContextUtil.getAuthenticatedUser();
+        Usuario usuarioLogado = UtilDoContextoDeSeguranca.getAuthenticatedUser();
         if (usuarioLogado.getPerfis().contains(Perfil.ADMIN) && chamadoDTO.getTecnicoId() != null) {
             Usuario tecnico = usuarioRepositorio.findById(chamadoDTO.getTecnicoId())
                     .orElseThrow(() -> new ResourceNotFoundException("Técnico não encontrado com o ID: " + chamadoDTO.getTecnicoId()));
@@ -88,7 +88,7 @@ public class ChamadoServicoImpl implements ChamadoServico {
     }
 
     private void validaPermissaoSobreChamado(Chamado chamado, String acao) {
-        Usuario usuarioLogado = SecurityContextUtil.getAuthenticatedUser();
+        Usuario usuarioLogado = UtilDoContextoDeSeguranca.getAuthenticatedUser();
         if (!usuarioLogado.getPerfis().contains(Perfil.ADMIN) && !chamado.getSolicitante().equals(usuarioLogado)) {
             throw new AccessDeniedException("Acesso negado: Você não tem permissão para " + acao + " este chamado.");
         }

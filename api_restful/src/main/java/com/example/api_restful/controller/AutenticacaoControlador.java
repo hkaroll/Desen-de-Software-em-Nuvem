@@ -1,6 +1,6 @@
 package com.example.api_restful.controller;
 
-import com.example.api_restful.security.JwtTokenProvider;
+import com.example.api_restful.security.ProvedorDeTokenJWT;
 import com.example.api_restful.security.dto.JwtAuthenticationResponse;
 import com.example.api_restful.security.dto.LoginRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,11 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AutenticacaoControlador {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider tokenProvider;
+    private final ProvedorDeTokenJWT provedorDeToken;
 
-    public AutenticacaoControlador(AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
+    public AutenticacaoControlador(AuthenticationManager authenticationManager, ProvedorDeTokenJWT provedorDeToken) {
         this.authenticationManager = authenticationManager;
-        this.tokenProvider = tokenProvider;
+        this.provedorDeToken = provedorDeToken;
     }
 
     @Operation(summary = "Autentica um usuário e retorna um token JWT")
@@ -42,7 +42,7 @@ public class AutenticacaoControlador {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = tokenProvider.generateToken(authentication);
+        String jwt = provedorDeToken.generateToken(authentication);
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 }

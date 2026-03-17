@@ -7,7 +7,7 @@ import com.example.api_restful.model.Comentario;
 import com.example.api_restful.model.Usuario;
 import com.example.api_restful.repository.ChamadoRepositorio;
 import com.example.api_restful.repository.ComentarioRepositorio;
-import com.example.api_restful.security.SecurityContextUtil;
+import com.example.api_restful.security.UtilDoContextoDeSeguranca;
 import com.example.api_restful.service.ComentarioServico;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +38,7 @@ public class ComentarioServicoImpl implements ComentarioServico {
     public ComentarioDTO addComentario(Long chamadoId, ComentarioDTO comentarioDTO) {
         Chamado chamado = chamadoRepositorio.findById(chamadoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Chamado não encontrado com o ID: " + chamadoId));
-        Usuario autor = SecurityContextUtil.getAuthenticatedUser();
+        Usuario autor = UtilDoContextoDeSeguranca.getAuthenticatedUser();
 
         Comentario comentario = fromDTO(comentarioDTO);
         comentario.setChamado(chamado);
