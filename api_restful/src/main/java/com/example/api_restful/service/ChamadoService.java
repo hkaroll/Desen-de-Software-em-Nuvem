@@ -12,4 +12,6 @@ public interface ChamadoService {
     ChamadoDTO create(ChamadoDTO chamadoDTO);
 
     ChamadoDTO update(Long id, ChamadoDTO chamadoDTO);
+
+    void delete(Long id);
 }

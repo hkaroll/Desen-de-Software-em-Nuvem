@@ -29,21 +29,15 @@ public class ChamadoServiceImpl implements ChamadoService {
 
     @Override
     public ChamadoDTO findById(Long id) {
-        Usuario usuarioLogado = SecurityContextUtil.getAuthenticatedUser();
         Chamado chamado = chamadoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Chamado não encontrado com o ID: " + id));
-
-        if (!usuarioLogado.getPerfis().contains(Perfil.ADMIN) && !chamado.getSolicitante().equals(usuarioLogado)) {
-            throw new AccessDeniedException("Acesso negado: Você não tem permissão para visualizar este chamado.");
-        }
-
+        validaPermissaoSobreChamado(chamado, "visualizar");
         return toDTO(chamado);
     }
 
     @Override
     public List<ChamadoDTO> findAll() {
         Usuario usuarioLogado = SecurityContextUtil.getAuthenticatedUser();
-
         if (usuarioLogado.getPerfis().contains(Perfil.ADMIN)) {
             return chamadoRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
         } else {
@@ -56,26 +50,22 @@ public class ChamadoServiceImpl implements ChamadoService {
         Usuario solicitante = SecurityContextUtil.getAuthenticatedUser();
         Chamado chamado = fromDTO(chamadoDTO);
         chamado.setSolicitante(solicitante);
-        
         Chamado novoChamado = chamadoRepository.save(chamado);
         return toDTO(novoChamado);
     }
 
     @Override
     public ChamadoDTO update(Long id, ChamadoDTO chamadoDTO) {
-        Usuario usuarioLogado = SecurityContextUtil.getAuthenticatedUser();
         Chamado chamado = chamadoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Chamado não encontrado com o ID: " + id));
-
-        if (!usuarioLogado.getPerfis().contains(Perfil.ADMIN) && !chamado.getSolicitante().equals(usuarioLogado)) {
-            throw new AccessDeniedException("Acesso negado: Você não tem permissão para atualizar este chamado.");
-        }
+        validaPermissaoSobreChamado(chamado, "atualizar");
 
         chamado.setPrioridade(chamadoDTO.getPrioridade());
         chamado.setStatus(chamadoDTO.getStatus());
         chamado.setTitulo(chamadoDTO.getTitulo());
         chamado.setDescricao(chamadoDTO.getDescricao());
 
+        Usuario usuarioLogado = SecurityContextUtil.getAuthenticatedUser();
         if (usuarioLogado.getPerfis().contains(Perfil.ADMIN) && chamadoDTO.getTecnicoId() != null) {
             Usuario tecnico = usuarioRepository.findById(chamadoDTO.getTecnicoId())
                     .orElseThrow(() -> new ResourceNotFoundException("Técnico não encontrado com o ID: " + chamadoDTO.getTecnicoId()));
@@ -88,6 +78,20 @@ public class ChamadoServiceImpl implements ChamadoService {
 
         Chamado chamadoAtualizado = chamadoRepository.save(chamado);
         return toDTO(chamadoAtualizado);
+    }
+
+    @Override
+    public void delete(Long id) {
+        chamadoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Chamado não encontrado com o ID: " + id));
+        chamadoRepository.deleteById(id);
+    }
+
+    private void validaPermissaoSobreChamado(Chamado chamado, String acao) {
+        Usuario usuarioLogado = SecurityContextUtil.getAuthenticatedUser();
+        if (!usuarioLogado.getPerfis().contains(Perfil.ADMIN) && !chamado.getSolicitante().equals(usuarioLogado)) {
+            throw new AccessDeniedException("Acesso negado: Você não tem permissão para " + acao + " este chamado.");
+        }
     }
 
     private ChamadoDTO toDTO(Chamado chamado) {
