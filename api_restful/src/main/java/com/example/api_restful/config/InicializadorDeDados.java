@@ -2,7 +2,7 @@ package com.example.api_restful.config;
 
 import com.example.api_restful.model.Usuario;
 import com.example.api_restful.model.enums.Perfil;
-import com.example.api_restful.repository.UsuarioRepository;
+import com.example.api_restful.repository.UsuarioRepositorio;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,20 +13,20 @@ import java.util.Set;
 
 @Configuration
 @Profile("dev")
-public class TestDataInitializer {
+public class InicializadorDeDados {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioRepositorio usuarioRepositorio;
     private final PasswordEncoder passwordEncoder;
 
-    public TestDataInitializer(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
-        this.usuarioRepository = usuarioRepository;
+    public InicializadorDeDados(UsuarioRepositorio usuarioRepositorio, PasswordEncoder passwordEncoder) {
+        this.usuarioRepositorio = usuarioRepositorio;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Bean
     CommandLineRunner initDatabase() {
         return args -> {
-            usuarioRepository.deleteAll();
+            usuarioRepositorio.deleteAll();
 
             Usuario admin = new Usuario();
             admin.setNome("Admin Teste");
@@ -34,9 +34,9 @@ public class TestDataInitializer {
             admin.setSenha(passwordEncoder.encode("12345"));
             admin.setPerfis(Set.of(Perfil.ADMIN, Perfil.USUARIO));
 
-            usuarioRepository.save(admin);
+            usuarioRepositorio.save(admin);
 
-            System.out.println(">>> [TestDataInitializer] Usuário ADMIN de teste salvo: " + admin);
+            System.out.println(">>> [InicializadorDeDados] Usuário ADMIN de teste salvo: " + admin);
         };
     }
 }

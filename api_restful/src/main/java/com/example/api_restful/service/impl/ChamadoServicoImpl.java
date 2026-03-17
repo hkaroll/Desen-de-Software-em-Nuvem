@@ -6,10 +6,10 @@ import com.example.api_restful.exception.ResourceNotFoundException;
 import com.example.api_restful.model.Chamado;
 import com.example.api_restful.model.Usuario;
 import com.example.api_restful.model.enums.Perfil;
-import com.example.api_restful.repository.ChamadoRepository;
-import com.example.api_restful.repository.UsuarioRepository;
+import com.example.api_restful.repository.ChamadoRepositorio;
+import com.example.api_restful.repository.UsuarioRepositorio;
 import com.example.api_restful.security.SecurityContextUtil;
-import com.example.api_restful.service.ChamadoService;
+import com.example.api_restful.service.ChamadoServico;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,19 +17,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ChamadoServiceImpl implements ChamadoService {
+public class ChamadoServicoImpl implements ChamadoServico {
 
-    private final ChamadoRepository chamadoRepository;
-    private final UsuarioRepository usuarioRepository;
+    private final ChamadoRepositorio chamadoRepositorio;
+    private final UsuarioRepositorio usuarioRepositorio;
 
-    public ChamadoServiceImpl(ChamadoRepository chamadoRepository, UsuarioRepository usuarioRepository) {
-        this.chamadoRepository = chamadoRepository;
-        this.usuarioRepository = usuarioRepository;
+    public ChamadoServicoImpl(ChamadoRepositorio chamadoRepositorio, UsuarioRepositorio usuarioRepositorio) {
+        this.chamadoRepositorio = chamadoRepositorio;
+        this.usuarioRepositorio = usuarioRepositorio;
     }
 
     @Override
     public ChamadoDTO findById(Long id) {
-        Chamado chamado = chamadoRepository.findById(id)
+        Chamado chamado = chamadoRepositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Chamado não encontrado com o ID: " + id));
         validaPermissaoSobreChamado(chamado, "visualizar");
         return toDTO(chamado);
@@ -39,9 +39,9 @@ public class ChamadoServiceImpl implements ChamadoService {
     public List<ChamadoDTO> findAll() {
         Usuario usuarioLogado = SecurityContextUtil.getAuthenticatedUser();
         if (usuarioLogado.getPerfis().contains(Perfil.ADMIN)) {
-            return chamadoRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+            return chamadoRepositorio.findAll().stream().map(this::toDTO).collect(Collectors.toList());
         } else {
-            return chamadoRepository.findBySolicitante(usuarioLogado).stream().map(this::toDTO).collect(Collectors.toList());
+            return chamadoRepositorio.findBySolicitante(usuarioLogado).stream().map(this::toDTO).collect(Collectors.toList());
         }
     }
 
@@ -50,13 +50,13 @@ public class ChamadoServiceImpl implements ChamadoService {
         Usuario solicitante = SecurityContextUtil.getAuthenticatedUser();
         Chamado chamado = fromDTO(chamadoDTO);
         chamado.setSolicitante(solicitante);
-        Chamado novoChamado = chamadoRepository.save(chamado);
+        Chamado novoChamado = chamadoRepositorio.save(chamado);
         return toDTO(novoChamado);
     }
 
     @Override
     public ChamadoDTO update(Long id, ChamadoDTO chamadoDTO) {
-        Chamado chamado = chamadoRepository.findById(id)
+        Chamado chamado = chamadoRepositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Chamado não encontrado com o ID: " + id));
         validaPermissaoSobreChamado(chamado, "atualizar");
 
@@ -67,7 +67,7 @@ public class ChamadoServiceImpl implements ChamadoService {
 
         Usuario usuarioLogado = SecurityContextUtil.getAuthenticatedUser();
         if (usuarioLogado.getPerfis().contains(Perfil.ADMIN) && chamadoDTO.getTecnicoId() != null) {
-            Usuario tecnico = usuarioRepository.findById(chamadoDTO.getTecnicoId())
+            Usuario tecnico = usuarioRepositorio.findById(chamadoDTO.getTecnicoId())
                     .orElseThrow(() -> new ResourceNotFoundException("Técnico não encontrado com o ID: " + chamadoDTO.getTecnicoId()));
             chamado.setTecnico(tecnico);
         }
@@ -76,15 +76,15 @@ public class ChamadoServiceImpl implements ChamadoService {
             chamado.setDataFechamento(LocalDate.now());
         }
 
-        Chamado chamadoAtualizado = chamadoRepository.save(chamado);
+        Chamado chamadoAtualizado = chamadoRepositorio.save(chamado);
         return toDTO(chamadoAtualizado);
     }
 
     @Override
     public void delete(Long id) {
-        chamadoRepository.findById(id)
+        chamadoRepositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Chamado não encontrado com o ID: " + id));
-        chamadoRepository.deleteById(id);
+        chamadoRepositorio.deleteById(id);
     }
 
     private void validaPermissaoSobreChamado(Chamado chamado, String acao) {

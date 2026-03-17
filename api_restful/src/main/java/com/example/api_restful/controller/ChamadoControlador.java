@@ -2,8 +2,8 @@ package com.example.api_restful.controller;
 
 import com.example.api_restful.dto.ChamadoDTO;
 import com.example.api_restful.dto.ComentarioDTO;
-import com.example.api_restful.service.ChamadoService;
-import com.example.api_restful.service.ComentarioService;
+import com.example.api_restful.service.ChamadoServico;
+import com.example.api_restful.service.ComentarioServico;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -21,34 +21,34 @@ import java.util.List;
 @RequestMapping("/chamados")
 @Tag(name = "Chamados", description = "API para gerenciamento de chamados de suporte")
 @SecurityRequirement(name = "bearerAuth")
-public class ChamadoController {
+public class ChamadoControlador {
 
-    private final ChamadoService chamadoService;
-    private final ComentarioService comentarioService;
+    private final ChamadoServico chamadoServico;
+    private final ComentarioServico comentarioServico;
 
-    public ChamadoController(ChamadoService chamadoService, ComentarioService comentarioService) {
-        this.chamadoService = chamadoService;
-        this.comentarioService = comentarioService;
+    public ChamadoControlador(ChamadoServico chamadoServico, ComentarioServico comentarioServico) {
+        this.chamadoServico = chamadoServico;
+        this.comentarioServico = comentarioServico;
     }
 
     @Operation(summary = "Busca um chamado por ID")
     @GetMapping("/{id}")
     public ResponseEntity<ChamadoDTO> findById(@PathVariable Long id) {
-        ChamadoDTO chamadoDTO = chamadoService.findById(id);
+        ChamadoDTO chamadoDTO = chamadoServico.findById(id);
         return ResponseEntity.ok(chamadoDTO);
     }
 
     @Operation(summary = "Lista todos os chamados")
     @GetMapping
     public ResponseEntity<List<ChamadoDTO>> findAll() {
-        List<ChamadoDTO> list = chamadoService.findAll();
+        List<ChamadoDTO> list = chamadoServico.findAll();
         return ResponseEntity.ok(list);
     }
 
     @Operation(summary = "Cria um novo chamado")
     @PostMapping
     public ResponseEntity<ChamadoDTO> create(@Valid @RequestBody ChamadoDTO chamadoDTO) {
-        ChamadoDTO novoChamado = chamadoService.create(chamadoDTO);
+        ChamadoDTO novoChamado = chamadoServico.create(chamadoDTO);
         return new ResponseEntity<>(novoChamado, HttpStatus.CREATED);
     }
 
@@ -61,7 +61,7 @@ public class ChamadoController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<ChamadoDTO> update(@PathVariable Long id, @Valid @RequestBody ChamadoDTO chamadoDTO) {
-        ChamadoDTO chamadoAtualizado = chamadoService.update(id, chamadoDTO);
+        ChamadoDTO chamadoAtualizado = chamadoServico.update(id, chamadoDTO);
         return ResponseEntity.ok(chamadoAtualizado);
     }
 
@@ -74,21 +74,21 @@ public class ChamadoController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        chamadoService.delete(id);
+        chamadoServico.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Lista os comentários de um chamado")
     @GetMapping("/{id}/comentarios")
     public ResponseEntity<List<ComentarioDTO>> findComentariosByChamadoId(@PathVariable Long id) {
-        List<ComentarioDTO> comentarios = comentarioService.findByChamadoId(id);
+        List<ComentarioDTO> comentarios = comentarioServico.findByChamadoId(id);
         return ResponseEntity.ok(comentarios);
     }
 
     @Operation(summary = "Adiciona um novo comentário a um chamado")
     @PostMapping("/{id}/comentarios")
     public ResponseEntity<ComentarioDTO> addComentario(@PathVariable Long id, @Valid @RequestBody ComentarioDTO comentarioDTO) {
-        ComentarioDTO novoComentario = comentarioService.addComentario(id, comentarioDTO);
+        ComentarioDTO novoComentario = comentarioServico.addComentario(id, comentarioDTO);
         return new ResponseEntity<>(novoComentario, HttpStatus.CREATED);
     }
 }

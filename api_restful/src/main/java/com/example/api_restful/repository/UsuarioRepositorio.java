@@ -1,14 +1,13 @@
 package com.example.api_restful.repository;
 
-import com.example.api_restful.model.Chamado;
 import com.example.api_restful.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface ChamadoRepository extends JpaRepository<Chamado, Long> {
+public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
 
-    List<Chamado> findBySolicitante(Usuario solicitante);
+    Optional<Usuario> findByEmail(String email);
 }

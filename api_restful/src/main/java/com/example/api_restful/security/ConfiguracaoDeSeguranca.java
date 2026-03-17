@@ -17,20 +17,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfig {
+public class ConfiguracaoDeSeguranca {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final FiltroDeAutenticacaoJWT filtroDeAutenticacaoJWT;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    public ConfiguracaoDeSeguranca(FiltroDeAutenticacaoJWT filtroDeAutenticacaoJWT) {
+        this.filtroDeAutenticacaoJWT = filtroDeAutenticacaoJWT;
     }
 
-    private static final String[] PUBLIC_MATCHERS = {
+    private static final String[] CAMINHOS_PUBLICOS = {
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger-ui.html",
             "/login",
-            "/actuator/**" // Endpoints de monitoramento
+            "/actuator/**"
     };
 
     @Bean
@@ -39,12 +39,12 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(PUBLIC_MATCHERS).permitAll()
+                .requestMatchers(CAMINHOS_PUBLICOS).permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
                 .anyRequest().authenticated()
             );
 
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(filtroDeAutenticacaoJWT, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

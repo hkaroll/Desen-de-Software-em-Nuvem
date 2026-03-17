@@ -3,7 +3,7 @@ package com.example.api_restful.controller;
 import com.example.api_restful.exception.ResourceNotFoundException;
 import com.example.api_restful.model.Usuario;
 import com.example.api_restful.model.enums.Perfil;
-import com.example.api_restful.repository.UsuarioRepository;
+import com.example.api_restful.repository.UsuarioRepositorio;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,13 +20,13 @@ import java.util.Set;
 @RestController
 @RequestMapping("/usuarios")
 @Tag(name = "Usuários", description = "API para gerenciamento de usuários")
-public class UsuarioController {
+public class UsuarioControlador {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioRepositorio usuarioRepositorio;
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioController(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
-        this.usuarioRepository = usuarioRepository;
+    public UsuarioControlador(UsuarioRepositorio usuarioRepositorio, PasswordEncoder passwordEncoder) {
+        this.usuarioRepositorio = usuarioRepositorio;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -40,14 +40,14 @@ public class UsuarioController {
     public ResponseEntity<Usuario> criarUsuario(@Valid @RequestBody Usuario usuario) {
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         usuario.setPerfis(Set.of(Perfil.USUARIO));
-        Usuario novoUsuario = usuarioRepository.save(usuario);
+        Usuario novoUsuario = usuarioRepositorio.save(usuario);
         return new ResponseEntity<>(novoUsuario, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Lista todos os usuários", description = "Retorna uma lista com todos os usuários cadastrados.")
     @GetMapping
     public List<Usuario> listarUsuarios() {
-        return usuarioRepository.findAll();
+        return usuarioRepositorio.findAll();
     }
 
     @Operation(summary = "Busca um usuário por ID", description = "Retorna um usuário específico baseado no seu ID.")
@@ -57,7 +57,7 @@ public class UsuarioController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> buscarUsuarioPorId(@PathVariable Long id) {
-        Usuario usuario = usuarioRepository.findById(id)
+        Usuario usuario = usuarioRepositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o ID: " + id));
         return ResponseEntity.ok(usuario);
     }
@@ -70,7 +70,7 @@ public class UsuarioController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id, @Valid @RequestBody Usuario detalhesUsuario) {
-        Usuario usuario = usuarioRepository.findById(id)
+        Usuario usuario = usuarioRepositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o ID: " + id));
 
         usuario.setNome(detalhesUsuario.getNome());
@@ -80,7 +80,7 @@ public class UsuarioController {
             usuario.setSenha(passwordEncoder.encode(detalhesUsuario.getSenha()));
         }
 
-        final Usuario usuarioAtualizado = usuarioRepository.save(usuario);
+        final Usuario usuarioAtualizado = usuarioRepositorio.save(usuario);
         return ResponseEntity.ok(usuarioAtualizado);
     }
 
@@ -91,10 +91,10 @@ public class UsuarioController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarUsuario(@PathVariable Long id) {
-        Usuario usuario = usuarioRepository.findById(id)
+        Usuario usuario = usuarioRepositorio.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o ID: " + id));
 
-        usuarioRepository.delete(usuario);
+        usuarioRepositorio.delete(usuario);
         return ResponseEntity.noContent().build();
     }
 }

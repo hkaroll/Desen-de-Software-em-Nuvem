@@ -4,7 +4,7 @@ import com.example.api_restful.dto.ComentarioDTO;
 
 import java.util.List;
 
-public interface ComentarioService {
+public interface ComentarioServico {
 
     List<ComentarioDTO> findByChamadoId(Long chamadoId);
 

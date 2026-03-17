@@ -5,46 +5,46 @@ import com.example.api_restful.exception.ResourceNotFoundException;
 import com.example.api_restful.model.Chamado;
 import com.example.api_restful.model.Comentario;
 import com.example.api_restful.model.Usuario;
-import com.example.api_restful.repository.ChamadoRepository;
-import com.example.api_restful.repository.ComentarioRepository;
+import com.example.api_restful.repository.ChamadoRepositorio;
+import com.example.api_restful.repository.ComentarioRepositorio;
 import com.example.api_restful.security.SecurityContextUtil;
-import com.example.api_restful.service.ComentarioService;
+import com.example.api_restful.service.ComentarioServico;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ComentarioServiceImpl implements ComentarioService {
+public class ComentarioServicoImpl implements ComentarioServico {
 
-    private final ComentarioRepository comentarioRepository;
-    private final ChamadoRepository chamadoRepository;
+    private final ComentarioRepositorio comentarioRepositorio;
+    private final ChamadoRepositorio chamadoRepositorio;
 
-    public ComentarioServiceImpl(ComentarioRepository comentarioRepository, ChamadoRepository chamadoRepository) {
-        this.comentarioRepository = comentarioRepository;
-        this.chamadoRepository = chamadoRepository;
+    public ComentarioServicoImpl(ComentarioRepositorio comentarioRepositorio, ChamadoRepositorio chamadoRepositorio) {
+        this.comentarioRepositorio = comentarioRepositorio;
+        this.chamadoRepositorio = chamadoRepositorio;
     }
 
     @Override
     public List<ComentarioDTO> findByChamadoId(Long chamadoId) {
-        Chamado chamado = chamadoRepository.findById(chamadoId)
+        Chamado chamado = chamadoRepositorio.findById(chamadoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Chamado não encontrado com o ID: " + chamadoId));
-        return comentarioRepository.findByChamado(chamado).stream()
+        return comentarioRepositorio.findByChamado(chamado).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public ComentarioDTO addComentario(Long chamadoId, ComentarioDTO comentarioDTO) {
-        Chamado chamado = chamadoRepository.findById(chamadoId)
+        Chamado chamado = chamadoRepositorio.findById(chamadoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Chamado não encontrado com o ID: " + chamadoId));
-        Usuario autor = SecurityContextUtil.getAuthenticatedUser(); // O autor é o usuário logado
+        Usuario autor = SecurityContextUtil.getAuthenticatedUser();
 
         Comentario comentario = fromDTO(comentarioDTO);
         comentario.setChamado(chamado);
         comentario.setAutor(autor);
 
-        Comentario novoComentario = comentarioRepository.save(comentario);
+        Comentario novoComentario = comentarioRepositorio.save(comentario);
         return toDTO(novoComentario);
     }
 

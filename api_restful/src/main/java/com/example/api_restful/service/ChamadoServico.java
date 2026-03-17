@@ -3,7 +3,7 @@ package com.example.api_restful.service;
 import com.example.api_restful.dto.ChamadoDTO;
 import java.util.List;
 
-public interface ChamadoService {
+public interface ChamadoServico {
 
     ChamadoDTO findById(Long id);
 
