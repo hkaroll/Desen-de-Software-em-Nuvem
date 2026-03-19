@@ -1,0 +1,301 @@
+:root {
+  --primary: #1a73e8; 
+  --primary-hover: #1557b0; 
+  --bg-sidebar: #1a202c;    
+  --bg-body: #f8fafc;    
+  --text-main: #2d3748;
+  --text-muted: #718096;
+  --border: #e2e8f0;
+  --white: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background-color: var(--bg-sidebar);
+  color: var(--white);
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header h2 {
+  text-align: center;
+  font-size: 1.4rem;
+  margin-bottom: 2.5rem;
+  letter-spacing: 1px;
+}
+
+.user-info-sidebar {
+  padding: 0 25px;
+  margin-bottom: 20px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  border-left: 3px solid var(--primary);
+  margin-left: 20px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0 15px;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  color: #a0aec0;
+  padding: 12px 15px;
+  width: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  text-align: left;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.nav-button:hover, .nav-button.active {
+  background-color: #2d3748;
+  color: var(--white);
+}
+
+.nav-button.active {
+  background-color: var(--primary);
+}
+
+.main-content {
+  padding: 2.5rem;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
+}
+
+.header-left h1 {
+  font-size: 1.8rem;
+  color: var(--text-main);
+  margin-bottom: 15px;
+}
+
+.search-container {
+  position: relative;
+  width: 300px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 10px 10px 35px;
+  border: 1px solid var(--border);
+  border-radius: 25px;
+  background-color: var(--white);
+  font-size: 0.9rem;
+  outline: none;
+  transition: 0.3s;
+}
+
+.search-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat-card {
+  background: var(--white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border-top: 4px solid var(--primary);
+}
+
+.stat-number {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: var(--primary);
+  margin-top: 10px;
+}
+
+.tickets-table-container {
+  background: var(--white);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.tickets-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tickets-table th {
+  background: #f8fafc;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 1rem 1.2rem;
+  border-bottom: 2px solid var(--border);
+  text-align: left;
+}
+
+.tickets-table td {
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.btn-action-view {
+  background: #f1f5f9;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  color: var(--primary);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-action-view:hover {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.badge {
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.priority-alta { background: #fee2e2; color: #991b1b; }
+.priority-média { background: #fef3c7; color: #92400e; }
+.priority-baixa { background: #d1fae5; color: #065f46; }
+
+.status-select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  background: var(--white);
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--bg-sidebar) 100%);
+}
+
+.login-card {
+  background: var(--white);
+  padding: 3rem;
+  border-radius: 15px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+.login-card h2 { color: var(--primary); margin-bottom: 20px; }
+.login-card p { margin-bottom: 25px; color: var(--text-muted); }
+
+.login-field-group { text-align: left; margin-bottom: 1.5rem; display: flex; flex-direction: column; }
+.login-field-group label { font-weight: bold; margin-bottom: 5px; }
+.login-field-group input { padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%; }
+
+.login-btn { 
+  width: 100%; 
+  background: var(--primary); 
+  color: white; 
+  border: none; 
+  padding: 14px; 
+  border-radius: 8px; 
+  cursor: pointer; 
+  font-weight: bold; 
+  font-size: 1rem;
+}
+
+.btn-add-ticket {
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 450px;
+  position: relative;
+  box-shadow: 0 20px 25px rgba(0,0,0,0.2);
+}
+
+.close-modal {
+  position: absolute;
+  right: 20px; top: 15px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-form-group { margin-bottom: 1rem; text-align: left; display: flex; flex-direction: column; }
+.modal-form-group label { font-weight: bold; margin-bottom: 5px; }
+.modal-form-group input, .modal-form-group select, .modal-form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; }
+
+.modal-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.modal-submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+.view-description-box { background: #f8fafc; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-top: 10px; }
