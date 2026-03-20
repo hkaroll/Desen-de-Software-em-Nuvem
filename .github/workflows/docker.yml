@@ -1,28 +1,52 @@
-name: CI/CD Pipeline
+name: CI/CD - Java Docker
 
 on:
   push:
-    branches: [ "apirestfull" ]
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Baixar código
       - name: Checkout do código
         uses: actions/checkout@v3
 
+      # 2. Configurar Java 17 (igual seu Dockerfile)
       - name: Configurar Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
+      # 3. Cache do Maven (melhora performance)
+      - name: Cache do Maven
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      # 4. Build da aplicação
       - name: Build com Maven
         run: mvn clean package -DskipTests
 
-      - name: Build da imagem Docker
+      # 5. Build da imagem Docker
+      - name: Build Docker Image
         run: docker build -t api-java .
 
-      - name: Simulação de deploy
+      # 6. Rodar container (teste simples)
+      - name: Testar container
+        run: |
+          docker run -d -p 8080:8080 --name test-container api-java
+          sleep 10
+          docker ps
+          docker stop test-container
+
+      # 7. Simulação de deploy
+      - name: Deploy (simulado)
         run: echo "Deploy realizado com sucesso 🚀"
