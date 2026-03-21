@@ -29,12 +29,15 @@ function Dashboard() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const fetchChamados = useCallback(async () => {
+  const fetchChamados = useCallback(async (currentUser) => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('chamados')
-      .select('*')
-      .order('data_abertura', { ascending: false }); 
+    let query = supabase.from('chamados').select('*').order('data_abertura', { ascending: false }); 
+    
+    if (currentUser !== 'admin') {
+      query = query.eq('autor', currentUser);
+    }
+
+    const { data, error } = await query;
     if (!error) setChamados(data || []);
     setLoading(false);
   }, []);
@@ -43,13 +46,18 @@ function Dashboard() {
     const savedUser = localStorage.getItem('uniforUser');
     if (!savedUser) { navigate('/'); return; }
     setUser(savedUser);
-    fetchChamados();
+    fetchChamados(savedUser);
   }, [navigate, fetchChamados]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
     const { error } = await supabase.from('chamados').insert([{ 
-      titulo, descricao, prioridade, status: 'ABERTO', solicitante_id: 1, data_abertura: new Date().toISOString() 
+      titulo, 
+      descricao, 
+      prioridade, 
+      status: 'ABERTO', 
+      autor: user, 
+      data_abertura: new Date().toISOString() 
     }]);
 
     if (error) {
@@ -58,7 +66,7 @@ function Dashboard() {
       toast.success('✅ Chamado Aberto com sucesso!');
       setShowCreateModal(false);
       setTitulo(""); setDescricao(""); setPrioridade("MEDIA");
-      fetchChamados();
+      fetchChamados(user);
     }
   };
 
@@ -72,7 +80,7 @@ function Dashboard() {
     let novoStatus = statusAtual === 'ABERTO' ? 'EM_ATENDIMENTO' : statusAtual === 'EM_ATENDIMENTO' ? 'RESOLVIDO' : 'FECHADO';
     const { error } = await supabase.from('chamados').update({ status: novoStatus }).eq('id', id);
     if (!error) {
-      fetchChamados();
+      fetchChamados(user);
     } else {
       toast.error(`Erro ao atualizar: ${error.message}`);
     }
@@ -88,7 +96,7 @@ function Dashboard() {
           toast.error(`Erro ao excluir: ${error.message}`);
         } else {
           toast.success('🗑️ Chamado removido com sucesso!');
-          fetchChamados(); 
+          fetchChamados(user); 
         }
       } catch (err) {
         toast.error("Ocorreu um erro inesperado.");
@@ -115,7 +123,7 @@ function Dashboard() {
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '15px' }}>
           <div>
             <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', margin: 0, color: '#1a202c' }}>Painel de Chamados</h1>
-            <p style={{ color: '#718096', margin: 0 }}>Gestão Unifor Cloud</p>
+            <p style={{ color: '#718096', margin: 0 }}>Gestão Unifor Cloud {user === 'admin' ? ' | MODO ADMIN' : ''}</p>
           </div>
           <button className="login-btn" style={{ width: 'auto', padding: '12px 24px', margin: 0 }} onClick={() => setShowCreateModal(true)}>
             + Novo Chamado
@@ -142,26 +150,26 @@ function Dashboard() {
 
         <section style={{ background: '#fff', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', minWidth: '750px', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <table style={{ width: '100%', minWidth: '850px', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead style={{ background: '#fcfcfc' }}>
                 <tr>
                   <th style={{ padding: '18px' }}>ID</th>
                   <th style={{ padding: '18px' }}>Solicitação</th>
+                  <th style={{ padding: '18px' }}>Solicitante</th>
                   <th style={{ padding: '18px' }}>Urgência</th>
                   <th style={{ padding: '18px' }}>Ações</th>
                 </tr>
               </thead>
               <tbody>
-              
                 {loading ? (
                   <tr>
-                    <td colSpan="4" style={{ padding: '30px', textAlign: 'center', color: '#718096' }}>
+                    <td colSpan="5" style={{ padding: '30px', textAlign: 'center', color: '#718096' }}>
                       Sincronizando dados...
                     </td>
                   </tr>
                 ) : filteredChamados.length === 0 ? (
                   <tr>
-                    <td colSpan="4" style={{ padding: '30px', textAlign: 'center', color: '#718096' }}>
+                    <td colSpan="5" style={{ padding: '30px', textAlign: 'center', color: '#718096' }}>
                       Nenhum chamado encontrado.
                     </td>
                   </tr>
@@ -172,6 +180,9 @@ function Dashboard() {
                       <td onClick={() => handleViewDetails(c)} style={{ padding: '18px', cursor: 'pointer' }}>
                         <div style={{ fontWeight: '600' }}>{c.titulo}</div>
                         <div style={{ fontSize: '0.75rem', color: '#a0aec0' }}>Aberto em {new Date(c.data_abertura).toLocaleDateString('pt-BR')}</div>
+                      </td>
+                      <td style={{ padding: '18px', color: '#4a5568', fontWeight: '500' }}>
+                        👤 {c.autor || 'Desconhecido'}
                       </td>
                       <td style={{ padding: '18px' }}>
                         <span style={{ background: c.prioridade === 'ALTA' ? '#e53e3e' : c.prioridade === 'MEDIA' ? '#ecc94b' : '#48bb78', color: '#fff', padding: '5px 12px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 'bold' }}>
@@ -199,6 +210,9 @@ function Dashboard() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, padding: '20px' }} onClick={() => setShowViewModal(false)}>
           <div style={{ background: 'white', padding: '2rem', borderRadius: '20px', width: '100%', maxWidth: '450px' }} onClick={e => e.stopPropagation()}>
             <h2>#{selectedChamado.id} - {selectedChamado.titulo}</h2>
+            <p style={{ color: '#718096', fontSize: '0.85rem', marginBottom: '15px' }}>
+              Aberto por: <strong>{selectedChamado.autor || 'Desconhecido'}</strong>
+            </p>
             <p style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', minHeight: '100px', marginBottom: '20px' }}>{selectedChamado.descricao}</p>
             <button onClick={() => setShowViewModal(false)} style={{ width: '100%', padding: '12px', background: '#1a73e8', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold' }}>Fechar</button>
           </div>
