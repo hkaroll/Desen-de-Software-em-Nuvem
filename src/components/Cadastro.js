@@ -40,7 +40,7 @@ function Cadastro() {
     });
 
     if (error) {
-      console.error('Erro real do Supabase:', error.message); 
+      console.log('🚨 ALERTA DE ERRO COMPLETO:', error); 
       toast.error('❌ Erro ao criar conta. Verifique os dados e tente novamente.');
     } else {
       toast.success('✅ Conta criada com sucesso! Faça o login agora.');
