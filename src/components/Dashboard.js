@@ -33,7 +33,7 @@ function Dashboard() {
     setLoading(true);
     let query = supabase.from('chamados').select('*').order('data_abertura', { ascending: false }); 
     
-    if (currentUser !== 'admin') {
+    if (currentUser?.toLowerCase() !== 'admin') {
       query = query.eq('autor', currentUser);
     }
 

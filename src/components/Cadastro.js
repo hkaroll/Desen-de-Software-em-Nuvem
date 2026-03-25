@@ -33,13 +33,14 @@ function Cadastro() {
       password,
       options: {
         data: {
-          full_name: fullName,
+          nome: fullName,
           department: department,
         }
       }
     });
 
     if (error) {
+      console.error('Erro real do Supabase:', error.message); 
       toast.error('❌ Erro ao criar conta. Verifique os dados e tente novamente.');
     } else {
       toast.success('✅ Conta criada com sucesso! Faça o login agora.');

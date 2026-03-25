@@ -23,3 +23,71 @@ Projeto prático com foco em arquitetura web, responsividade e integração de b
 - **Backend / Banco de Dados:** [Supabase](https://supabase.com/) (PostgreSQL + API RESTful)
 - **Alertas:** React Toastify
 - **Deploy / CI/CD:** [Vercel](https://vercel.com/) (Integração contínua via GitHub)
+
+## 🛠️ Instalação
+
+- **Clone o repositório:**
+git clone https://github.com/hkaroll/Desen-de-Software-em-Nuvem.git
+
+- **Acesse a pasta do projeto:**
+cd Desen-de-Software-em-Nuvem
+
+- **Instale as dependências:**
+npm install
+
+## 🔗 Link da Aplicação
+
+-- https://desen-de-software-em-nuvem.vercel.app/
+
+## 📸 Preview
+
+![Preview](./assets/tela1.png)
+![Preview](./assets/tela2.png)
+![Preview](./assets/tela3.png)
+![Preview](./assets/tela4.png)
+![Preview](./assets/tela5.png)
+
+## 📂 Estrutura do projeto
+
+```text
+UNIFOR-HELPDESK/
+├── node_modules/
+├── public/
+│   ├── assets/
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo.ico
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   └── robots.txt
+├── src/
+│   ├── components/
+│   ├── App.css
+│   ├── App.js
+│   ├── App.test.js
+│   ├── index.css
+│   ├── index.js
+│   ├── logo.svg
+│   ├── reportWebVitals.js
+│   ├── setupTests.js
+│   └── supabaseClient.js
+├── .dockerignore
+├── .env
+├── .gitignore
+├── Dockerfile
+├── package-lock.json
+├── package.json
+└── README.md
+```
+
+## Autores (Matrículas)
+
+Esse trabalho foi desenvolvido pela Equipe:
+
+-- Hevlina Karoll Lima Reis (Matrícula: 2425124)
+-- Francisco Erasmo Pires Abreu (Matrícula: 2415473)
+-- Ana Beatriz da Silva de Oliveira (Matrícula: 2425104)
+-- Levi Martins Marques (Matrícula: 2425085)
+-- Higor Reis de Sátiro (Matrícula: 2425093)
+-- Mayra Ribeiro da Silva (Matrícula: 2425026)
