@@ -85,9 +85,9 @@ UNIFOR-HELPDESK/
 
 Esse trabalho foi desenvolvido pela Equipe:
 
--- **Hevlina Karoll Lima Reis** (Matrícula: 2425124)
--- **Francisco Erasmo Pires Abreu** (Matrícula: 2415473)
--- **Ana Beatriz da Silva de Oliveira** (Matrícula: 2425104)
--- **Levi Martins Marques** (Matrícula: 2425085)
--- **Higor Reis de Sátiro** (Matrícula: 2425093)
--- **Mayra Ribeiro da Silva** (Matrícula: 2425026)
+- **Hevlina Karoll Lima Reis** (Matrícula: 2425124)
+- **Francisco Erasmo Pires Abreu** (Matrícula: 2415473)
+- **Ana Beatriz da Silva de Oliveira** (Matrícula: 2425104)
+- **Levi Martins Marques** (Matrícula: 2425085)
+- **Higor Reis de Sátiro** (Matrícula: 2425093)
+- **Mayra Ribeiro da Silva** (Matrícula: 2425026)
