@@ -33,7 +33,7 @@ function Cadastro() {
       password,
       options: {
         data: {
-          nome: fullName,
+          full_name: fullName,
           department: department,
         }
       }
