@@ -41,11 +41,11 @@ npm install
 
 ## 📸 Preview
 
-![Preview](./assets/tela1.png)
-![Preview](./assets/tela2.png)
-![Preview](./assets/tela3.png)
-![Preview](./assets/tela4.png)
-![Preview](./assets/tela5.png)
+![Preview](./public/assets/tela1.png)
+![Preview](./public/assets/tela2.png)
+![Preview](./public/assets/tela3.png)
+![Preview](./public/assets/tela4.png)
+![Preview](./public/assets/tela5.png)
 
 ## 📂 Estrutura do projeto
 
@@ -85,9 +85,9 @@ UNIFOR-HELPDESK/
 
 Esse trabalho foi desenvolvido pela Equipe:
 
--- Hevlina Karoll Lima Reis (Matrícula: 2425124)
--- Francisco Erasmo Pires Abreu (Matrícula: 2415473)
--- Ana Beatriz da Silva de Oliveira (Matrícula: 2425104)
--- Levi Martins Marques (Matrícula: 2425085)
--- Higor Reis de Sátiro (Matrícula: 2425093)
--- Mayra Ribeiro da Silva (Matrícula: 2425026)
+-- **Hevlina Karoll Lima Reis** (Matrícula: 2425124)
+-- **Francisco Erasmo Pires Abreu** (Matrícula: 2415473)
+-- **Ana Beatriz da Silva de Oliveira** (Matrícula: 2425104)
+-- **Levi Martins Marques** (Matrícula: 2425085)
+-- **Higor Reis de Sátiro** (Matrícula: 2425093)
+-- **Mayra Ribeiro da Silva** (Matrícula: 2425026)
