@@ -23,6 +23,9 @@ function Dashboard() {
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [prioridade, setPrioridade] = useState("MEDIA");
+  
+  // NOVO: Estado para guardar o texto da resposta do admin
+  const [respostaAdmin, setRespostaAdmin] = useState("");
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -86,6 +89,7 @@ function Dashboard() {
 
   const handleViewDetails = (chamado) => {
     setSelectedChamado(chamado);
+    setRespostaAdmin(chamado.resposta || "");
     setShowViewModal(true);
   };
 
@@ -97,6 +101,17 @@ function Dashboard() {
       fetchChamados(user);
     } else {
       toast.error(`Erro ao atualizar: ${error.message}`);
+    }
+  };
+
+  const handleSalvarResposta = async () => {
+    const { error } = await supabase.from('chamados').update({ resposta: respostaAdmin }).eq('id', selectedChamado.id);
+    if (!error) {
+      toast.success('💬 Resposta enviada com sucesso!');
+      setShowViewModal(false);
+      fetchChamados(user);
+    } else {
+      toast.error(`Erro ao responder: ${error.message}`);
     }
   };
 
@@ -139,9 +154,11 @@ function Dashboard() {
             <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', margin: 0, color: '#1a202c' }}>Painel de Chamados</h1>
             <p style={{ color: '#718096', margin: 0 }}>Gestão Unifor Cloud {user === 'admin' ? ' | MODO ADMIN' : ''}</p>
           </div>
-          <button className="login-btn" style={{ width: 'auto', padding: '12px 24px', margin: 0 }} onClick={() => setShowCreateModal(true)}>
-            + Novo Chamado
-          </button>
+          {user !== 'admin' && (
+            <button className="login-btn" style={{ width: 'auto', padding: '12px 24px', margin: 0 }} onClick={() => setShowCreateModal(true)}>
+              + Novo Chamado
+            </button>
+          )}
         </header>
 
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: '15px', marginBottom: '25px' }}>
@@ -205,7 +222,7 @@ function Dashboard() {
                       </td>
                       <td style={{ padding: '18px' }}>
                         <div style={{ display: 'flex', gap: '8px' }}>
-                          {c.status !== 'FECHADO' && (
+                          {c.status !== 'FECHADO' && user === 'admin' && (
                             <button onClick={(e) => handleUpdateStatus(e, c.id, c.status)} style={{ padding: '8px 16px', background: '#3182ce', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.75rem', cursor: 'pointer' }}>Avançar</button>
                           )}
                           <button onClick={(e) => handleDelete(e, c.id)} style={{ padding: '8px 12px', background: 'none', border: '1px solid #feb2b2', color: '#e53e3e', borderRadius: '8px', fontSize: '0.75rem', cursor: 'pointer' }}>Excluir</button>
@@ -222,14 +239,47 @@ function Dashboard() {
 
       {showViewModal && selectedChamado && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, padding: '20px' }} onClick={() => setShowViewModal(false)}>
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '20px', width: '100%', maxWidth: '450px' }} onClick={e => e.stopPropagation()}>
-            <h2>#{selectedChamado.id} - {selectedChamado.titulo}</h2>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '20px', width: '100%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+              <h2 style={{ margin: 0 }}>#{selectedChamado.id} - {selectedChamado.titulo}</h2>
+              <span style={{ background: '#edf2f7', padding: '5px 10px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 'bold' }}>{selectedChamado.status}</span>
+            </div>
+            
             <p style={{ color: '#718096', fontSize: '0.85rem', marginBottom: '15px', lineHeight: '1.5' }}>
               Aberto por: <strong>{selectedChamado.autor || 'Desconhecido'}</strong><br/>
               Setor: <strong>{selectedChamado.setor || 'Não informado'}</strong>
             </p>
-            <p style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', minHeight: '100px', marginBottom: '20px' }}>{selectedChamado.descricao}</p>
-            <button onClick={() => setShowViewModal(false)} style={{ width: '100%', padding: '12px', background: '#1a73e8', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>Fechar</button>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <strong style={{ fontSize: '0.9rem', color: '#4a5568' }}>Descrição do Problema:</strong>
+              <p style={{ background: '#f8fafc', padding: '15px', borderRadius: '12px', minHeight: '80px', marginTop: '5px' }}>{selectedChamado.descricao}</p>
+            </div>
+
+            {user === 'admin' ? (
+              <div style={{ marginBottom: '20px', borderTop: '1px solid #e2e8f0', paddingTop: '15px' }}>
+                <strong style={{ fontSize: '0.9rem', color: '#1a73e8' }}>Responder ao Usuário:</strong>
+                <textarea 
+                  value={respostaAdmin} 
+                  onChange={e => setRespostaAdmin(e.target.value)} 
+                  placeholder="Digite a solução ou resposta oficial aqui..." 
+                  style={{ width: '100%', padding: '12px', marginTop: '10px', borderRadius: '8px', border: '1px solid #cbd5e0', height: '100px', resize: 'none', boxSizing: 'border-box' }}
+                />
+                <button onClick={handleSalvarResposta} style={{ width: '100%', padding: '10px', background: '#3182ce', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px' }}>
+                  Salvar Resposta
+                </button>
+              </div>
+            ) : (
+              selectedChamado.resposta && (
+                <div style={{ marginBottom: '20px', borderTop: '1px solid #e2e8f0', paddingTop: '15px' }}>
+                  <strong style={{ fontSize: '0.9rem', color: '#38a169' }}>Resposta do Suporte:</strong>
+                  <p style={{ background: '#f0fff4', padding: '15px', borderRadius: '12px', color: '#276749', marginTop: '5px', border: '1px solid #c6f6d5' }}>
+                    {selectedChamado.resposta}
+                  </p>
+                </div>
+              )
+            )}
+
+            <button onClick={() => setShowViewModal(false)} style={{ width: '100%', padding: '12px', background: '#e2e8f0', color: '#4a5568', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>Fechar Janela</button>
           </div>
         </div>
       )}
@@ -239,9 +289,9 @@ function Dashboard() {
           <div style={{ background: 'white', padding: '2rem', borderRadius: '20px', width: '100%', maxWidth: '400px' }}>
             <h3 style={{ marginBottom: '20px' }}>Nova Solicitação</h3>
             <form onSubmit={handleCreate}>
-              <input type="text" placeholder="Título" value={titulo} onChange={e => setTitulo(e.target.value)} required style={{ width: '100%', padding: '12px', marginBottom: '15px', borderRadius: '8px', border: '1px solid #ddd' }} />
-              <textarea placeholder="Descrição" value={descricao} onChange={e => setDescricao(e.target.value)} required style={{ width: '100%', padding: '12px', marginBottom: '15px', borderRadius: '8px', border: '1px solid #ddd', height: '100px', resize: 'none' }}></textarea>
-              <select value={prioridade} onChange={e => setPrioridade(e.target.value)} style={{ width: '100%', padding: '12px', marginBottom: '25px', borderRadius: '8px' }}>
+              <input type="text" placeholder="Título" value={titulo} onChange={e => setTitulo(e.target.value)} required style={{ width: '100%', padding: '12px', marginBottom: '15px', borderRadius: '8px', border: '1px solid #ddd', boxSizing: 'border-box' }} />
+              <textarea placeholder="Descrição" value={descricao} onChange={e => setDescricao(e.target.value)} required style={{ width: '100%', padding: '12px', marginBottom: '15px', borderRadius: '8px', border: '1px solid #ddd', height: '100px', resize: 'none', boxSizing: 'border-box' }}></textarea>
+              <select value={prioridade} onChange={e => setPrioridade(e.target.value)} style={{ width: '100%', padding: '12px', marginBottom: '25px', borderRadius: '8px', boxSizing: 'border-box' }}>
                 <option value="BAIXA">Baixa</option>
                 <option value="MEDIA">Média</option>
                 <option value="ALTA">Alta</option>
