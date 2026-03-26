@@ -226,7 +226,7 @@ function Dashboard() {
             <h2>#{selectedChamado.id} - {selectedChamado.titulo}</h2>
             <p style={{ color: '#718096', fontSize: '0.85rem', marginBottom: '15px', lineHeight: '1.5' }}>
               Aberto por: <strong>{selectedChamado.autor || 'Desconhecido'}</strong><br/>
-              Setor/Curso: <strong>{selectedChamado.setor || 'Não informado'}</strong>
+              Setor: <strong>{selectedChamado.setor || 'Não informado'}</strong>
             </p>
             <p style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', minHeight: '100px', marginBottom: '20px' }}>{selectedChamado.descricao}</p>
             <button onClick={() => setShowViewModal(false)} style={{ width: '100%', padding: '12px', background: '#1a73e8', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>Fechar</button>
