@@ -50,7 +50,9 @@ function Dashboard() {
       setUser(savedUser);
 
       if (savedUser.toLowerCase() !== 'admin') {
-        const { data } = await supabase.from('usuarios').select('setor').eq('email', savedUser).single();
+        const { data, error } = await supabase.from('usuarios').select('setor').eq('nome', savedUser).single();
+        console.log("🕵️ ARMADILHA 1 - Buscando setor do banco:", data, "Erro:", error);
+
         if (data && data.setor) setUserSetor(data.setor);
       } else {
         setUserSetor('Administração');
@@ -64,6 +66,9 @@ function Dashboard() {
 
   const handleCreate = async (e) => {
     e.preventDefault();
+    
+    console.log("🕵️ ARMADILHA 2 - Setor que vai ser salvo no chamado:", userSetor);
+
     const { error } = await supabase.from('chamados').insert([{ 
       titulo, 
       descricao, 
@@ -75,6 +80,7 @@ function Dashboard() {
     }]);
 
     if (error) {
+      console.log("🚨 ARMADILHA 3 - ERRO AO CRIAR CHAMADO:", error);
       toast.error(`Erro: ${error.message}`);
     } else {
       toast.success('✅ Chamado Aberto com sucesso!');
