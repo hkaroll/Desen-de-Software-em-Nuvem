@@ -7,6 +7,7 @@ import { supabase } from '../supabaseClient';
 function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState("");
+  const [userSetor, setUserSetor] = useState("");
   const [chamados, setChamados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -43,10 +44,22 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('uniforUser');
-    if (!savedUser) { navigate('/'); return; }
-    setUser(savedUser);
-    fetchChamados(savedUser);
+    const loadUserData = async () => {
+      const savedUser = localStorage.getItem('uniforUser');
+      if (!savedUser) { navigate('/'); return; }
+      setUser(savedUser);
+
+      if (savedUser.toLowerCase() !== 'admin') {
+        const { data } = await supabase.from('usuarios').select('setor').eq('email', savedUser).single();
+        if (data && data.setor) setUserSetor(data.setor);
+      } else {
+        setUserSetor('Administração');
+      }
+
+      fetchChamados(savedUser);
+    };
+
+    loadUserData();
   }, [navigate, fetchChamados]);
 
   const handleCreate = async (e) => {
@@ -57,6 +70,7 @@ function Dashboard() {
       prioridade, 
       status: 'ABERTO', 
       autor: user, 
+      setor: userSetor,
       data_abertura: new Date().toISOString() 
     }]);
 
@@ -210,11 +224,12 @@ function Dashboard() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, padding: '20px' }} onClick={() => setShowViewModal(false)}>
           <div style={{ background: 'white', padding: '2rem', borderRadius: '20px', width: '100%', maxWidth: '450px' }} onClick={e => e.stopPropagation()}>
             <h2>#{selectedChamado.id} - {selectedChamado.titulo}</h2>
-            <p style={{ color: '#718096', fontSize: '0.85rem', marginBottom: '15px' }}>
-              Aberto por: <strong>{selectedChamado.autor || 'Desconhecido'}</strong>
+            <p style={{ color: '#718096', fontSize: '0.85rem', marginBottom: '15px', lineHeight: '1.5' }}>
+              Aberto por: <strong>{selectedChamado.autor || 'Desconhecido'}</strong><br/>
+              Setor/Curso: <strong>{selectedChamado.setor || 'Não informado'}</strong>
             </p>
             <p style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', minHeight: '100px', marginBottom: '20px' }}>{selectedChamado.descricao}</p>
-            <button onClick={() => setShowViewModal(false)} style={{ width: '100%', padding: '12px', background: '#1a73e8', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold' }}>Fechar</button>
+            <button onClick={() => setShowViewModal(false)} style={{ width: '100%', padding: '12px', background: '#1a73e8', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>Fechar</button>
           </div>
         </div>
       )}
