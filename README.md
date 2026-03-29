@@ -83,7 +83,7 @@ UNIFOR-HELPDESK/
 
 ## Autores (Matrículas)
 
-Esse trabalho foi desenvolvido pela Equipe:
+Esse trabalho foi desenvolvido pela Equipe 52:
 
 - **Hevlina Karoll Lima Reis** (Matrícula: 2425124)
 - **Francisco Erasmo Pires Abreu** (Matrícula: 2415473)
