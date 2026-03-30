@@ -46,6 +46,7 @@ npm install
 ![Preview](./public/assets/tela3.png)
 ![Preview](./public/assets/tela4.png)
 ![Preview](./public/assets/tela5.png)
+![Preview](./public/assets/tela6.png)
 
 ## 📂 Estrutura do projeto
 
